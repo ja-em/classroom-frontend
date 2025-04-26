@@ -1,4 +1,4 @@
-import { LogOut, School } from "lucide-react";
+import { School } from "lucide-react";
 import { NavMenu } from "@/components/nav-menu";
 import {
   Sidebar,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { MenuLinkEnum } from "@/constants/menu";
+import { LogoutButton } from "./logout-button";
 
 export function AppSidebar({ link }: { link: MenuLinkEnum }) {
   return (
@@ -37,16 +38,7 @@ export function AppSidebar({ link }: { link: MenuLinkEnum }) {
         <NavMenu link={link} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href={""}>
-                <LogOut />
-                <span>Logout</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <LogoutButton />
       </SidebarFooter>
     </Sidebar>
   );

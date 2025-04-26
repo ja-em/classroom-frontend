@@ -9,19 +9,26 @@ import {
 import { Separator } from "./ui/separator";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "./ui/sidebar";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { verifySession } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Classroom Management",
   description: "Classroom Management",
 };
 
-export const MainLayout = ({
+export const MainLayout = async ({
   children,
   link = MenuLinkEnum.CLASSROOM,
 }: {
   children: React.ReactNode;
   link?: MenuLinkEnum;
 }) => {
+  const session = await verifySession();
+
+  if (!session) {
+    redirect("/login");
+  }
   return (
     <SidebarProvider>
       <AppSidebar link={link} />
