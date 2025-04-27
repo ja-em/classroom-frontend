@@ -1,109 +1,48 @@
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-const products = [
-  {
-    id: 101,
-    name: "Wireless Headphones",
-    category: "Electronics",
-    price: 59.99,
-    rating: 4.5,
-  },
-  {
-    id: 102,
-    name: "Yoga Mat",
-    category: "Sports & Fitness",
-    price: 25.0,
-    rating: 4.8,
-  },
-  {
-    id: 103,
-    name: "Coffee Maker",
-    category: "Home Appliances",
-    price: 80.0,
-    rating: 4.2,
-  },
-  {
-    id: 104,
-    name: "Running Shoes",
-    category: "Sportswear",
-    price: 70.0,
-    rating: 4.6,
-  },
-  {
-    id: 105,
-    name: "Smartwatch",
-    category: "Electronics",
-    price: 120.0,
-    rating: 4.7,
-  },
-];
-export function TableWrapper() {
+import React from "react";
+import { TablePagination } from "./table-pagination";
+
+export function TableWrapper({
+  headers,
+  children,
+}: {
+  headers: string[];
+  children: React.ReactNode;
+}) {
+  let paginationComponent: React.ReactNode;
+  let tableData: React.ReactNode;
+
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child)) {
+      if (child.type === TablePagination) {
+        paginationComponent = child;
+      }
+      if (child.type === TableBody) {
+        tableData = child;
+      }
+    }
+  });
   return (
     <div className="w-full">
       <div className="w-full border rounded-md overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>ชื่อ</TableHead>
-              <TableHead>นามสกุล</TableHead>
-              <TableHead>รหัสบัตรประชาชน</TableHead>
-              <TableHead>เพศ</TableHead>
-              <TableHead>วันเกิด</TableHead>
-              <TableHead>ระดับชั้น</TableHead>
+              {headers.map((head, i) => (
+                <TableHead key={head ?? i}>{head}</TableHead>
+              ))}
             </TableRow>
           </TableHeader>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id} className="odd:bg-muted/50">
-                <TableCell>{product.id}</TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.rating}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
+          {tableData}
         </Table>
       </div>
-      <Pagination className="mt-4">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          {/* <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem> */}
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      {paginationComponent}
     </div>
   );
 }
