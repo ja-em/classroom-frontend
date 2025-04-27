@@ -8,6 +8,16 @@ import {
 } from "../form";
 import { Input } from "../input";
 
+export type IDefaultFormField<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> = {
+  control: Control<TFieldValues>;
+  name: TName;
+  label?: string;
+  disabled?: boolean;
+};
+
 export function InputFormField<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
@@ -15,7 +25,8 @@ export function InputFormField<
   control,
   name,
   label,
-}: Readonly<{ control: Control<TFieldValues>; name: TName; label?: string }>) {
+  disabled,
+}: Readonly<IDefaultFormField<TFieldValues, TName>>) {
   return (
     <FormField
       control={control}
@@ -25,7 +36,12 @@ export function InputFormField<
           <FormItem className="w-full">
             <FormLabel>{label ?? name}</FormLabel>
             <FormControl>
-              <Input placeholder={label ?? name} {...field} />
+              <Input
+                placeholder={label ?? name}
+                {...field}
+                value={field.value ?? ""}
+                disabled={disabled}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

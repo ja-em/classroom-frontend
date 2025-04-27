@@ -1,4 +1,4 @@
-import { getAllStudent } from "@/app/actions/student";
+import { getAllStudentAction } from "@/app/actions/student";
 import { IPaginationRequest } from "@/types/interface/request";
 import { TableWrapper } from "../table/table-wrapper";
 import { TablePagination } from "../table/table-pagination";
@@ -6,6 +6,7 @@ import { TableBody, TableCell, TableRow } from "../ui/table";
 import { LoaderIcon } from "lucide-react";
 
 import { AddStudent } from "./add-student";
+import { Suspense } from "react";
 const headers = [
   "ID",
   "ชื่อ",
@@ -17,11 +18,15 @@ const headers = [
   "",
 ];
 export async function MainStudent({ page }: IPaginationRequest) {
-  const { items, ...pagi } = await getAllStudent({ page: page ? +page : 1 });
+  const { items, ...pagi } = await getAllStudentAction({
+    page: page ? +page : 1,
+  });
 
   return (
     <div>
-      <AddStudent />
+      <Suspense fallback={"loading..."}>
+        <AddStudent />
+      </Suspense>
       <TableWrapper headers={headers}>
         <TableBody>
           {items.map((item) => (
@@ -31,7 +36,7 @@ export async function MainStudent({ page }: IPaginationRequest) {
               <TableCell>{item.lastName}</TableCell>
               <TableCell>{item.identificationNumber}</TableCell>
               <TableCell>{item.gender}</TableCell>
-              <TableCell>{item.birthDate.toString()}</TableCell>
+              <TableCell>{item.birthDate.toString().split("T")[0]}</TableCell>
               <TableCell>{item.classLevel?.name}</TableCell>
               <TableCell></TableCell>
             </TableRow>

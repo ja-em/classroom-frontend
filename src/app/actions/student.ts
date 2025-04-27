@@ -3,6 +3,7 @@
 import { graphqlRequest } from "@/lib/grapql-request";
 import { IPaginationRequest } from "@/types/interface/request";
 import {
+  IClassLevelObject,
   IPaginationResponse,
   IStudentObject,
 } from "@/types/interface/response";
@@ -37,7 +38,7 @@ const queryAll = gql`
   }
 `;
 
-export const getAllStudent = async (
+export const getAllStudentAction = async (
   variables: IPaginationRequest
 ): Promise<IPaginationResponse<IStudentObject[]>> => {
   const res = await graphqlRequest<{
@@ -58,4 +59,25 @@ export const getAllStudent = async (
     return mock;
   }
   return res.getStudent;
+};
+
+const queryAllClassLevel = gql`
+  query GetStudent {
+    getClassLevel {
+      id
+      name
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const getAllClassLevelAction = async (): Promise<
+  IClassLevelObject[]
+> => {
+  const res = await graphqlRequest<{
+    getClassLevel: IClassLevelObject[];
+  }>(queryAllClassLevel);
+
+  return res?.getClassLevel ?? [];
 };
