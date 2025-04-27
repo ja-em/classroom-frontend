@@ -5,12 +5,15 @@ import {
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "./ui/breadcrumb";
 import { Separator } from "./ui/separator";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "./ui/sidebar";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { verifySession } from "@/lib/auth";
+import { SearchKeyword } from "./search-keyword";
+import { ChevronsRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Classroom Management",
@@ -46,6 +49,13 @@ export const MainLayout = async ({
                   <BreadcrumbPage>
                     {menus.find((e) => e.url === link)?.name}
                   </BreadcrumbPage>
+                </BreadcrumbItem>
+
+                <BreadcrumbSeparator>
+                  <ChevronsRight />
+                </BreadcrumbSeparator>
+                <BreadcrumbItem>
+                  <SearchKeyword />
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>

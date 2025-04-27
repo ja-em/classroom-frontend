@@ -11,23 +11,23 @@ export function DialogWrapper({
   onOpenChange,
   open,
   disabled,
-  addLabel,
   dialogTitle,
   children,
   className,
+  triggerChildren,
 }: {
   onOpenChange: (open: boolean) => void;
   open: boolean;
   disabled?: boolean;
-  addLabel?: string;
   dialogTitle?: string;
   children?: React.ReactNode;
   className?: string;
+  triggerChildren?: React.ReactNode;
 }) {
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogTrigger asChild disabled={disabled}>
-        <Button>{addLabel}</Button>
+        {triggerChildren}
       </DialogTrigger>
       <DialogContent
         className={className}
@@ -77,9 +77,11 @@ export function DialogWrapper({
 DialogWrapper.Footer = function Footer({
   onOpenChange,
   disabled,
+  onConfirm,
 }: {
   onOpenChange: (open: boolean) => void;
   disabled?: boolean;
+  onConfirm?: () => void;
 }) {
   return (
     <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
@@ -91,7 +93,11 @@ DialogWrapper.Footer = function Footer({
       >
         cancel
       </Button>
-      <Button type="submit" disabled={disabled}>
+      <Button
+        type="submit"
+        disabled={disabled}
+        {...(onConfirm && { onClick: onConfirm })}
+      >
         confirm
       </Button>
     </div>

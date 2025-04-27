@@ -1,12 +1,13 @@
-import { getAllStudentAction } from "@/app/actions/student";
+import { getAllClassLevelAction, getAllStudentAction } from "@/actions/student";
 import { IPaginationRequest } from "@/types/interface/request";
 import { TableWrapper } from "../table/table-wrapper";
 import { TablePagination } from "../table/table-pagination";
 import { TableBody, TableCell, TableRow } from "../ui/table";
 import { LoaderIcon } from "lucide-react";
-
-import { AddStudent } from "./add-student";
-import { Suspense } from "react";
+import { AddStudentForm } from "./add-student-form";
+import { EditStudentForm } from "./edit-student-form";
+import { DeleteStudentForm } from "./delete-student";
+import { SearchSelect } from "../search-select";
 const headers = [
   "ID",
   "ชื่อ",
@@ -17,16 +18,33 @@ const headers = [
   "ระดับชั้น",
   "",
 ];
-export async function MainStudent({ page }: IPaginationRequest) {
-  const { items, ...pagi } = await getAllStudentAction({
-    page: page ? +page : 1,
-  });
+export async function MainStudent({
+  page,
+  keyword,
+  classLevelId,
+}: IPaginationRequest & { classLevelId: string }) {
+  const [{ items, ...pagi }, classLevel] = await Promise.all([
+    getAllStudentAction({
+      page: page ? +page : 1,
+      keyword,
+      classLevelId: +classLevelId,
+    }),
+    getAllClassLevelAction(),
+  ]);
 
   return (
     <div>
-      <Suspense fallback={"loading..."}>
-        <AddStudent />
-      </Suspense>
+      <div className="flex mb-2 justify-between ">
+        <SearchSelect
+          items={classLevel.map((v) => ({
+            value: v.id.toString(),
+            label: v.name,
+          }))}
+          selectKey="classLevelId"
+          label="ระดับชั้น"
+        />
+        <AddStudentForm classLevelItems={classLevel} />
+      </div>
       <TableWrapper headers={headers}>
         <TableBody>
           {items.map((item) => (
@@ -38,7 +56,10 @@ export async function MainStudent({ page }: IPaginationRequest) {
               <TableCell>{item.gender}</TableCell>
               <TableCell>{item.birthDate.toString().split("T")[0]}</TableCell>
               <TableCell>{item.classLevel?.name}</TableCell>
-              <TableCell></TableCell>
+              <TableCell className="flex justify-center space-x-1">
+                <EditStudentForm classLevelItems={classLevel} student={item} />
+                <DeleteStudentForm student={item} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

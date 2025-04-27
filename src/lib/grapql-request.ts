@@ -33,12 +33,27 @@ export async function graphqlRequest<TRes>(
       ...variable,
     });
 
-    return response;
-  } catch (e) {
-    if (e instanceof ClientError) {
-      console.log(e.response);
-    } else {
-      console.log({ e });
+    return {
+      ok: true,
+      data: response,
+      error: null,
+    };
+  } catch (e: unknown) {
+    let err;
+    if (e instanceof ClientError && e.response) {
+      const responseErr = e.response.errors;
+      if (responseErr && responseErr[0].message) {
+        err = responseErr[0].message;
+      } else {
+        err = e.message;
+      }
     }
+    console.log(e);
+
+    return {
+      ok: false,
+      data: null,
+      error: err,
+    };
   }
 }

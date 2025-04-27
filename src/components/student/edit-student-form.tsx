@@ -11,32 +11,39 @@ import {
 import { Form } from "../ui/form";
 import { SelectFormField } from "../ui/form-field/select-form-field";
 import { DateFormField } from "../ui/form-field/date-form-field";
-import { IClassLevelObject } from "@/types/interface/response";
-import { createStudentAction } from "@/actions/student";
+import { IClassLevelObject, IStudentObject } from "@/types/interface/response";
+import { updateStudentAction } from "@/actions/student";
 import { toast } from "react-toastify";
 import { Button } from "../ui/button";
+import { Pencil } from "lucide-react";
 
-export const AddStudentForm = ({
+export const EditStudentForm = ({
   classLevelItems,
+  student,
 }: {
   classLevelItems: IClassLevelObject[];
+  student: IStudentObject;
 }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const form = useForm({
     mode: "all",
     resolver: zodResolver(createStudenSchema),
-    defaultValues: {},
+    defaultValues: {
+      ...student,
+      classLevelId: student.classLevelId.toString() as unknown as number,
+      birthDate: new Date(student.birthDate),
+    },
   });
 
   const onSubmit = async (value: ICreateStudenSchema) => {
     setLoading(true);
-    const data = await createStudentAction(value);
+    const data = await updateStudentAction(student.id, value);
     setLoading(false);
+    form.clearErrors();
     if (data.ok) {
-      toast.success("Create Success");
+      toast.success("Update Success");
       setOpen(false);
-      form.reset();
     } else {
       toast.error(data.error);
     }
@@ -44,10 +51,19 @@ export const AddStudentForm = ({
   return (
     <DialogWrapper
       open={open}
-      onOpenChange={(o) => setOpen(o)}
-      dialogTitle="เพิ่มนักเรียน"
+      onOpenChange={(o) => {
+        if (!o) {
+          form.clearErrors();
+        }
+        setOpen(o);
+      }}
+      dialogTitle="แก้ไขนักเรียน"
       disabled={loading}
-      triggerChildren={<Button>เพิ่มนักเรียน</Button>}
+      triggerChildren={
+        <Button size="icon-sm" className="rounded-full">
+          <Pencil />
+        </Button>
+      }
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -109,7 +125,12 @@ export const AddStudentForm = ({
             />
           </div>
           <DialogWrapper.Footer
-            onOpenChange={(o) => setOpen(o)}
+            onOpenChange={(o) => {
+              if (!o) {
+                form.clearErrors();
+              }
+              setOpen(o);
+            }}
             disabled={loading}
           />
         </form>
