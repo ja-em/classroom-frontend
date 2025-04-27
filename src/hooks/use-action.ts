@@ -2,7 +2,7 @@ import {
   IAction,
   IFieldErrors,
   IUseActionOptions,
-} from "@/app/types/interface/action";
+} from "@/types/interface/action";
 import { useCallback, useState } from "react";
 
 export const useAction = <TInput, TOutput>(

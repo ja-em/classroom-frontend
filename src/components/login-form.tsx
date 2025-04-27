@@ -6,11 +6,13 @@ import { School } from "lucide-react";
 import { Form } from "./ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ILoginSchema, loginSchema } from "@/app/types/schema/login";
+import { ILoginSchema, loginSchema } from "@/types/schema/login";
 import { InputFormField } from "./ui/form-field/input-form-field";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { MenuLinkEnum } from "@/constants/menu";
+import { Bounce, toast } from "react-toastify";
+import { useState } from "react";
 
 export function LoginForm() {
   const loginForm = useForm({
@@ -22,14 +24,43 @@ export function LoginForm() {
     },
   });
 
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const onSubmit = async (data: ILoginSchema) => {
-    await signIn("credentials", {
+    setLoading(true);
+    const res = await signIn("credentials", {
       redirect: false,
       ...data,
     });
-    router.push(MenuLinkEnum.CLASSROOM);
+    setLoading(false);
+    if (res?.ok) {
+      toast.success("Login success", {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      router.push(MenuLinkEnum.CLASSROOM);
+      return;
+    }
+    toast.error(res?.error?.split(":")[0], {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      transition: Bounce,
+    });
   };
 
   return (
@@ -54,7 +85,7 @@ export function LoginForm() {
                 <div className="grid gap-3">
                   <InputFormField control={loginForm.control} name="password" />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={loading}>
                   Login
                 </Button>
               </div>

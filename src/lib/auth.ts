@@ -2,8 +2,7 @@ import { AuthOptions, getServerSession } from "next-auth";
 import { decode, JwtPayload } from "jsonwebtoken";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { gql, request } from "graphql-request";
-import { ISession, IUser } from "@/app/types/interface/auth";
-import { redirect } from "next/navigation";
+import { ISession, IUser } from "@/types/interface/auth";
 
 const LOGIN_MUTATION = gql`
   mutation Login($username: String!, $password: String!) {
@@ -13,15 +12,6 @@ const LOGIN_MUTATION = gql`
     }
   }
 `;
-
-// const REFRESH_MUTATION = gql`
-//   mutation Refresh($refreshToken: String!) {
-//     refreshToken(refreshTokenInput: { refreshToken: $refreshToken }) {
-//       accessToken
-//       refreshToken
-//     }
-//   }
-// `;
 
 interface ITokenResponse {
   accessToken: string;
